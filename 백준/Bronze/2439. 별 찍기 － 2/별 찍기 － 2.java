@@ -1,0 +1,23 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Main {
+
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int N = Integer.parseInt(br.readLine());
+		
+		for(int i=0; i<N; i++) {
+			String result = "";
+			for(int j=N-1-i; j>0; j--) {
+				result += " ";
+			}
+			for(int j=0; j<i+1; j++) {
+				result += "*";
+			}
+			System.out.println(result);
+		}
+	}
+}
