@@ -10,41 +10,26 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        StringBuilder sb = new StringBuilder();
 
         int N = Integer.parseInt(br.readLine());
-        Long distance = 0L;
-        Long current = 0L;
-
-        st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 0; i < N-1; i++) {
-            Long num = Long.parseLong(st.nextToken());
-
-            lengthList.add(num);
-            distance += num;
-        }
-
-        st = new StringTokenizer(br.readLine(), " ");
+        StringTokenizer stLength = new StringTokenizer(br.readLine(), " ");
+        StringTokenizer stValue = new StringTokenizer(br.readLine(), " ");
         for (int i = 0; i < N; i++) {
-            valueList.add(Long.parseLong(st.nextToken()));
-
-            if(i < N - 1){
-                current += valueList.get(i) * lengthList.get(i);
+            valueList.add(Long.parseLong(stValue.nextToken()));
+            if(i < N -1){
+                lengthList.add(Long.parseLong(stLength.nextToken()));
             }
         }
 
         // 거리 계산
+        Long min = Long.MAX_VALUE;
         Long result = 0L;
         for (int i = 0; i < N-1; i++) {
-            if(current > valueList.get(i) * distance){
-                result += valueList.get(i) * distance;
-                break;
+            if(min > valueList.get(i)){
+                min = valueList.get(i);
             }
 
-            result += valueList.get(i) * lengthList.get(i);
-            distance -= lengthList.get(i);
-            current -= valueList.get(i) * lengthList.get(i);
+            result += min * lengthList.get(i);
         }
 
         System.out.println(result);
