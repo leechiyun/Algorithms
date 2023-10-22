@@ -32,8 +32,7 @@ public class Main {
             }
         }
 
-        Collections.sort(resultList);
-        Collections.reverse(resultList);
+        Collections.sort(resultList, (s1, s2) -> s2.compareTo(s1));
         for (String result : resultList) {
             sb.append(result).append("\n");
         }
