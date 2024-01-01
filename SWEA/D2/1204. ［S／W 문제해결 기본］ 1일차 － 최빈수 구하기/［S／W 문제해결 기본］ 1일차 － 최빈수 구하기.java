@@ -8,38 +8,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-public class Solution {
-    private final static int STUDENT_COUNT = 1000;
-
+class Solution {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int tc = Integer.parseInt(br.readLine());
-        StringBuilder sb = new StringBuilder();
-        for (int i = 1; i <= tc; i++) {
+        int T = Integer.parseInt(br.readLine());
+        for (int tc = 1; tc <= T; tc++) {
             int testCase = Integer.parseInt(br.readLine());
-            Map<Long, Long> map = new HashMap<>();
-
+            Map<Integer, Integer> map = new HashMap<>();
             StringTokenizer st = new StringTokenizer(br.readLine(), " ");
-            Long max = Long.MIN_VALUE;
-            for (int j = 0; j < STUDENT_COUNT; j++) {
-                Long num = Long.parseLong(st.nextToken());
+            for (int i = 0; i < 1000; i++) {
+                int num = Integer.parseInt(st.nextToken());
 
-                map.put(num, map.getOrDefault(num, 0L) + 1);
-                if(max < map.get(num)){
-                    max = map.get(num);
-                }
+                map.put(num, map.getOrDefault(num, 0) + 1);
             }
 
-            List<Long> resultList = new ArrayList<>();
-            for(Long key: map.keySet()) {
-                if(map.get(key) == max) {
-                    resultList.add(key);
+            List<Integer> numbers = new ArrayList<>(map.keySet());
+            Collections.sort(numbers, (a, b) -> {
+                if(map.get(a) == map.get(b)) {
+                    return b - a;
                 }
-            }
+                return map.get(b) - map.get(a);
+            });
 
-            sb.append("#").append(i).append(" ").append(Collections.max(resultList)).append("\n");
+            System.out.println("#" + tc + " " + numbers.get(0));
         }
-        System.out.println(sb);
     }
 }
