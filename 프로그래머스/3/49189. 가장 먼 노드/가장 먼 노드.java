@@ -48,6 +48,7 @@ class Solution {
             
         }
         
+        // 최장거리가 몇개인지 확인
         int count = 0;
         for(int key: results.keySet()) {
             if(max == results.get(key)) {
