@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -137,13 +138,12 @@ public class Main {
     }
 
     static int[][] copyMap(int[][] map) {
-        int newMap[][] = new int[map.length][map[0].length];
+        int[][] newMap = new int[map.length][];
 
-        for(int i = 0; i < map.length; i++) {
-            for(int j = 0; j < map[0].length; j++) {
-                newMap[i][j] = map[i][j];
-            }
+        for (int i = 0; i < map.length; i++) {
+            newMap[i] = Arrays.copyOf(map[i], map[i].length);
         }
+
         return newMap;
     }
 }
