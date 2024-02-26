@@ -1,58 +1,57 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
-    static List<Integer>[] map;
-    static boolean visited[];
-    static int N, M;
-    static int count = 0;
-
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        N = Integer.parseInt(br.readLine());
-        M = Integer.parseInt(br.readLine());
-
-        visited = new boolean[N+1];
-        // ArrayList 초기화
-        map = new ArrayList[N+1];
-        for (int i = 1; i <= N; i++) {
-            map[i] = new ArrayList<>();
-        }
-        
-        // map 입력 (그래프)
-        for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine(), " ");
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-
-            // 값 집어넣기
-            map[x].add(y);
-            map[y].add(x);
-        }
-
-        // bfs
-        // 1. Queue 에 시작점 넣게
-        Queue<Integer> queue = new LinkedList<>();
-        queue.offer(1);
-        visited[1] = true;
-
-        while (!queue.isEmpty()){
-            int pos = queue.poll();
-
-            for (int i = 0; i < map[pos].size(); i++) {
-                if(!visited[map[pos].get(i)]){
-                    queue.offer(map[pos].get(i));
-                    visited[map[pos].get(i)] = true;
-                    count++;
-                }
-
-            }
-        }
-        System.out.println(count);
-    }
+	static List<Integer> graphs[];
+	
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = null;
+		
+		int N = Integer.parseInt(br.readLine());
+		
+		graphs = new List[N + 1];
+		for(int i = 0; i <= N; i++) {
+			graphs[i] = new ArrayList<>();
+		}
+		
+		int M = Integer.parseInt(br.readLine());
+		for(int i = 0; i < M; i++) {
+			st = new StringTokenizer(br.readLine());
+			
+			int x = Integer.parseInt(st.nextToken());
+			int y = Integer.parseInt(st.nextToken());
+			
+			// 양방향 그래프
+			graphs[x].add(y);
+			graphs[y].add(x);
+		}
+		
+		// BFS로 그래프 탐색
+		Queue<Integer> queue = new ArrayDeque<>();
+		boolean visited[] = new boolean[N + 1];
+		
+		queue.offer(1);
+		visited[1] = true;
+		int count = 0;
+		while(!queue.isEmpty()) {
+			int cur = queue.poll();
+			
+			for(int next: graphs[cur]) {
+				if(!visited[next]) {
+					visited[next] = true;
+					queue.offer(next);
+					count++;
+				}
+			}
+		}
+		
+		System.out.println(count);
+	}
 }
