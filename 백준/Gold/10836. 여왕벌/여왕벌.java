@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -50,24 +51,24 @@ public class Main {
             nodes.add(new Node(0, j));
         }
 
-        int cnt[] = new int[3];
+        int[] prefixSum = new int[N + N - 1];
         for (int m = 0; m < M; m++) {
             st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
 
-            for (int i = 0; i < cnt.length; i++) {
-                cnt[i] = Integer.parseInt(st.nextToken());
+            for (int i = a; i < a + b; i++) {
+                prefixSum[i] += 1;
             }
-
-            int idx = 0;
-            for (int c = 0; c < cnt.length; c++) {
-                for (int i = idx; i < idx + cnt[c]; i++) {
-                    Node cur = nodes.get(i);
-
-                    map[cur.x][cur.y] += nums[c];
-                }
-
-                idx += cnt[c];
+            for (int i = a + b; i < 2*N - 1; i++) {
+                prefixSum[i] += 2;
             }
+        }
+        for (int i = 0; i < prefixSum.length; i++) {
+            Node cur = nodes.get(i);
+
+            map[cur.x][cur.y] += prefixSum[i];
         }
 
         // 돌아가며 왼쪽, 왼쪽위, 위를 비교하고 큰 값저장
