@@ -1,24 +1,20 @@
-import java.util.*;
-
 class Solution {
+    // 1. 가장 큰 값을 하나 찾는다
+    // 2. A를 더 큰 값으로 설정하고 B를 구한다.
     public int solution(int[][] sizes) {
-        List<Integer> bigList = new ArrayList<>();
-        List<Integer> smallList = new ArrayList<>();
+        int maxA = Integer.MIN_VALUE;
+        int maxB = Integer.MIN_VALUE;
         
-        for(int i=0; i<sizes.length; i++) {
-            int a = sizes[i][0];
-            int b = sizes[i][1];
-            
-            if(a > b) {
-                bigList.add(a);
-                smallList.add(b);
+        for(int[] size: sizes) {
+            if(size[0] < size[1]) {
+               maxA = Math.max(maxA, size[1]);
+                maxB = Math.max(maxB, size[0]); 
             } else {
-                bigList.add(b);
-                smallList.add(a);
+                maxA = Math.max(maxA, size[0]);
+                maxB = Math.max(maxB, size[1]);
             }
         }
-        
-        int answer = Collections.max(bigList) * Collections.max(smallList);
-        return answer;
+
+        return maxA * maxB;
     }
 }
