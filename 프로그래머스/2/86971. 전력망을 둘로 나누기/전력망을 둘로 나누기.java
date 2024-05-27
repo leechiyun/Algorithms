@@ -1,66 +1,56 @@
 import java.util.*;
 
 class Solution {
-    static List<Integer>[] lists;
-    
-    static class Node {
-        int node;
-        int count;
-    }
+    static List<Integer> graph[];
     
     public int solution(int n, int[][] wires) {
-        lists = new ArrayList[n+1];
-        for(int i = 1; i <= n; i++) {
-            lists[i] = new ArrayList<>();
+        graph = new List[n + 1];
+        for(int i = 0; i <= n; i++) {
+            graph[i] = new ArrayList<>();
         }
         
-        // 양방향 간선 추가
-        for(int i = 0; i < wires.length; i++) {
-            int v1 = wires[i][0];
-            int v2 = wires[i][1];
+        for(int[] wire: wires) {
+            int x = wire[0];
+            int y = wire[1];
             
-            lists[v1].add(v2);
-            lists[v2].add(v1);
+            graph[x].add(y);
+            graph[y].add(x);
         }
         
-        List<Integer> results = new ArrayList<>();
-        for(int i = 0; i < wires.length; i++) {
-            int v1 = wires[i][0];
-            int v2 = wires[i][1];
- 
-            // 해당 간선을 그래프에서 제거
-            lists[v1].remove(Integer.valueOf(v2));
-            lists[v2].remove(Integer.valueOf(v1));
+        int min = Integer.MAX_VALUE;
+        for(int[] wire: wires) {
+            int x = wire[0];
+            int y = wire[1];
             
-            // bfs
-            boolean[] visited = new boolean[n + 1];
+            // 1. 연결 끊기
+            graph[x].remove(Integer.valueOf(y));
+            graph[y].remove(Integer.valueOf(x));
             
-            int count = 1;
-            Queue<Integer> queue = new ArrayDeque<>();
-            queue.offer(v1);
-            visited[v1] = true;
-            
-            while(!queue.isEmpty()){
-                int node = queue.poll();
+            // BFS 구현
+            boolean visited[] = new boolean[n + 1];
+            Queue<Integer> q = new ArrayDeque<>();
+            q.offer(1);
+            visited[1] = true;
+            int cnt = 1;
+            while(!q.isEmpty()) {
+                int cur = q.poll();
                 
-                for(int j = 0; j < lists[node].size(); j++) {
-                    int nextNode = lists[node].get(j);
-                    
-                    if(!visited[nextNode]) {
-                        visited[nextNode] = true;
-                        queue.offer(nextNode);
-                        count++;
+                for(int next:graph[cur]) {
+                    if(!visited[next]) {
+                        q.offer(next);
+                        visited[next] = true;
+                        cnt++;
                     }
                 }
             }
             
-            results.add(Math.abs(n - 2 * count));
+            min = Math.min(min, Math.abs((n - cnt) - cnt));
             
-            // 그래프에 다시 추가
-            lists[v1].add(v2);
-            lists[v2].add(v1);
+            // 2. 다시 연결
+            graph[x].add(y);
+            graph[y].add(x);
         }
         
-        return Collections.min(results);
+        return min;
     }
 }
