@@ -1,74 +1,91 @@
 import java.util.*;
 
 class Solution {
-    public String[] solution(String[][] plans) {
-        // 멈춘 과제 Stack
-        Stack<String> stack = new Stack<>();
+    
+    static class HomeWork {
+        String name;
+        int hour, minute;
+        int playTime;
         
-        // 과제와 남은 시간을 나타낼 Map
-        Map<String, Integer> remainMap = new HashMap<>();
-        Map<String, int[]> timeMap = new HashMap<>();
-        for(String[] plan: plans){
-            remainMap.put(plan[0], Integer.parseInt(plan[2]));
-            
-            String split[] = plan[1].split(":");
-            int time[] = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1])};
-            timeMap.put(plan[0], time);
+        public HomeWork(String name, int hour, int minute, int playTime) {
+            this.name = name;
+            this.hour = hour;
+            this.minute = minute;
+            this.playTime = playTime;
         }
-        List<String> startList = new ArrayList<>(timeMap.keySet());
-        Collections.sort(startList, (a, b) -> {
-            int hourA = timeMap.get(a)[0];
-            int minuteA = timeMap.get(a)[1];
-            int hourB = timeMap.get(b)[0];
-            int minuteB = timeMap.get(b)[1];
+        
+        public int calculateTime(HomeWork other) {
+            int m = other.minute - this.minute;
+            int h = other.hour - this.hour;
             
-            if(hourA == hourB) {
-                return minuteA - minuteB;
-            }
-            return hourA - hourB;
+            return 60 * h + m;
+        }
+        
+        public String toString() {
+            return this.name + " " + this.playTime;
+        }
+    }
+    
+    // 가장 최근에 멈춘 것부터 시작 (stack)
+    public String[] solution(String[][] plans) {
+        PriorityQueue<HomeWork> pq = new PriorityQueue<>((a, b) -> {
+            if(a.hour == b.hour)
+                return Integer.compare(a.minute, b.minute);
+            return Integer.compare(a.hour, b.hour);
         });
         
-        List<String> results = new ArrayList<>();
-        for(int i = 0; i < startList.size() - 1; i++) {
-            int time = (timeMap.get(startList.get(i + 1))[0] - timeMap.get(startList.get(i))[0])
-                * 60 + (timeMap.get(startList.get(i + 1))[1] - timeMap.get(startList.get(i))[1]);
+        for(String plan[]: plans) {
+            String time[] = plan[1].split(":");
             
-            String currName = startList.get(i);
-            int remainTime = time - remainMap.get(currName);
-            if(remainTime >= 0) {
-                // reminMap 삭제
-                remainMap.remove(currName);
-                results.add(currName);
+            pq.offer(new HomeWork(plan[0], Integer.parseInt(time[0]), Integer.parseInt(time[1]), 
+                                  Integer.parseInt(plan[2])));
+        }
+        
+        List<String> result = new ArrayList<>();
+        
+        // 미뤄둔 일을 저장할 stack
+        Stack<HomeWork> stack = new Stack<>();
+        HomeWork cur = pq.poll();
+        while(!pq.isEmpty()) {
+            HomeWork next = pq.poll();
+            
+            // 다음 일 동안 얼마만큼의 일을 할 수 있는지 확인
+            int remainTime = cur.calculateTime(next);
+            
+            // 일하는 시간 보다 남은 시간이 클 경우,
+            // 스택에서 남은 일을 마저한다.
+            if(remainTime >= cur.playTime) {
+                result.add(cur.name);
+                remainTime -= cur.playTime;
                 
                 while(remainTime > 0 && !stack.isEmpty()) {
-                    currName = stack.pop();
+                    cur = stack.pop();
                     
-                    int prevTime = remainTime;
-                    remainTime = remainTime - remainMap.get(currName);
-                    if(remainTime >= 0) {
-                        // reminMap 삭제
-                        remainMap.remove(currName);
-                        results.add(currName);
-                    } else{
-                        remainMap.put(currName, remainMap.get(currName) - prevTime);
-                        stack.push(currName);
-                    }       
-                
+                    if(remainTime >= cur.playTime) {
+                        remainTime -= cur.playTime;
+                        result.add(cur.name);
+                    } else {
+                        cur.playTime -= remainTime;
+                        stack.push(cur);
+                        remainTime = 0;
+                    }
                 }
-            } else{
-                remainMap.put(currName, remainMap.get(currName) - time);
-                stack.push(currName);
             }
+            else {
+                cur.playTime -= remainTime;
+                stack.push(cur);
+            }
+            
+            cur = next;
         }
-        stack.push(startList.get(startList.size() - 1));
-        
-        while(!stack.isEmpty()){
-            results.add(stack.pop());
+        stack.push(cur);
+        while(!stack.isEmpty()) {
+            result.add(stack.pop().name);
         }
         
-        String[] answer = new String[results.size()];
-        for(int i=0; i<results.size(); i++){
-            answer[i] = results.get(i);
+        String[] answer = new String[result.size()];
+        for(int i = 0; i < result.size(); i++) {
+            answer[i] = result.get(i);
         }
         
         return answer;
