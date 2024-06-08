@@ -15,17 +15,23 @@ class Solution {
             }
         }
         
+        
+        long dp[][] = new long[2][N];
+        
+        dp[0][0] = sequences[0][0];
+        dp[1][0] = sequences[1][0];
+        
         long max = Long.MIN_VALUE;
-        for (int[] s : sequences) {
-            long localMax = s[0];
-            long globalMax = s[0];
+        for(int i = 0; i < 2; i++) {
+            max = Math.max(max, dp[i][0]);
             
-            for (int i = 1; i < N; i++) {
-                localMax = Math.max(s[i], localMax + s[i]);
-                globalMax = Math.max(globalMax, localMax);
+            long localMax = Long.MIN_VALUE;
+            for(int j = 1; j < N; j++) {
+                dp[i][j] = Math.max(dp[i][j - 1] + sequences[i][j], sequences[i][j]);
+                localMax = Math.max(localMax, dp[i][j]);
             }
             
-            max = Math.max(max, globalMax);
+            max = Math.max(max, localMax);
         }
         
         return max;
