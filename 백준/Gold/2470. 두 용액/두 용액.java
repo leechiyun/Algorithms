@@ -1,40 +1,54 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
+    static int N;
+    static int arr[];
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        int N = Integer.parseInt(br.readLine());
+        StringTokenizer st = null;
 
-        List<Integer> list = new ArrayList<>();
-        st = new StringTokenizer(br.readLine(), " ");
+        N = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
+        arr = new int[N];
         for (int i = 0; i < N; i++) {
-            list.add(Integer.parseInt(st.nextToken()));
+            arr[i] = Integer.parseInt(st.nextToken());
         }
-        Collections.sort(list);
 
-        int left = 0, right = list.size() - 1;
-        int min = Integer.MAX_VALUE;
-        List<Integer> result = new ArrayList<>();
-        while (left < right) {
-            int sum = list.get(left) + list.get(right);
-            if (Math.abs(sum) < min) {
+        // 정렬
+        Arrays.sort(arr);
+
+        long min = Long.MAX_VALUE;
+        int l = 0;
+        int r = N - 1;
+
+        int rL = l;
+        int rR = r;
+        long sum = 0;
+        while (l < r) {
+            sum = arr[r] + arr[l];
+
+            if(min > Math.abs(sum)) {
                 min = Math.abs(sum);
-                result.clear();
-                result.add(list.get(left));
-                result.add(list.get(right));
+
+                rL = l;
+                rR = r;
             }
 
-            if (sum < 0) {
-                left++;
-            } else {
-                right--;
+            if(sum == 0) {
+                break;
+            }
+            else if(sum > 0) {
+                r--;
+            } else if (sum < 0) {
+                l++;
             }
         }
 
-        System.out.println(result.get(0) + " " + result.get(1));
+        System.out.println(arr[rL] + " " + arr[rR]);
     }
 }
