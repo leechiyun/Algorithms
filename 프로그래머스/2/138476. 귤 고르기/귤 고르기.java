@@ -1,27 +1,48 @@
 import java.util.*;
 
 class Solution {
+    class Node { 
+        int k, v;
+        
+        public Node(int k, int v) {
+            this.k = k;
+            this.v = v;
+        }
+        
+        public String toString() {
+            return this.k + " "  + this.v;
+        }
+    }
+    
+    Map<Integer, Integer> map = new HashMap<>();
+    
     public int solution(int k, int[] tangerine) {
-        // 종류별 귤의 갯수
-        Map<Integer, Integer> map = new HashMap<>();
-        for(int num: tangerine) {
-            map.put(num, map.getOrDefault(num, 0) + 1);
+        for(int t: tangerine) {
+            map.put(t, map.getOrDefault(t, 0) + 1);
         }
         
-        List<Integer> tangerines = new ArrayList<>(map.keySet());
-        Collections.sort(tangerines, (a, b) -> map.get(b) - map.get(a));
+        // max 찾기
+        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> {
+            return Integer.compare(b.v, a.v);
+        });
+        for(int key: map.keySet()){
+            pq.offer(new Node(key, map.get(key)));
+        }
         
-        int sum = 0;
-        int answer = 0;
-        for(int i = 0; i < tangerines.size(); i++) {
-            sum += map.get(tangerines.get(i));
-            answer++;
-            
-            if(sum >= k) {
-                return answer;
+        int result = 0;
+        int i = 0;
+        while(!pq.isEmpty()) {
+            if(i >= k) {
+                return result;
             }
+            
+            Node cur = pq.poll();
+            
+            i += map.get(cur.k);
+            
+            result++;
         }
         
-        return answer;
+        return result;
     }
 }
